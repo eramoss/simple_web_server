@@ -22,7 +22,7 @@ fn main() -> std::io::Result<()> {
         let request =
             handle_connection(&stream).expect("unable to handle connection to read stream");
 
-        println!("{:#?}", request.value());
+        println!("{}", request.value());
     }
 
     Ok(())
