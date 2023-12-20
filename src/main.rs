@@ -3,6 +3,8 @@ use std::net::{TcpListener, TcpStream};
 use std::time::Duration;
 use std::{fs, thread};
 
+use simple_web_server::thread_pool::ThreadPool;
+
 fn handle_connection(mut stream: TcpStream) {
     let buf_reader = BufReader::new(&stream);
     let request_line = buf_reader.lines().next().unwrap().unwrap();
@@ -25,10 +27,12 @@ fn handle_connection(mut stream: TcpStream) {
 
 fn main() -> std::io::Result<()> {
     let listener = TcpListener::bind(("0.0.0.0", 8080))?;
+    let pool = ThreadPool::new(4);
 
     for stream in listener.incoming() {
         let stream = stream?;
-        let _request = handle_connection(stream);
+
+        pool.execute(|| handle_connection(stream))
     }
 
     Ok(())
